@@ -12,7 +12,7 @@ server:
 
 management:
   server:
-    port: 9095
+    port: 9082
   endpoints:
     web:
       exposure:
@@ -28,9 +28,4 @@ management:
 
 logging:
   level:
-    com.mihaela.orderplatform: INFO
-
-springdoc:
-  swagger-ui:
-    path: /swagger-ui
-
+    com.mihaela.orderplatform: DEBUG
