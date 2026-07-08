@@ -2,10 +2,27 @@ package com.mihaela.orderplatform.transaction_service.mapper;
 
 import com.mihaela.orderplatform.transaction_service.domain.CustomerTransaction;
 import com.mihaela.orderplatform.transaction_service.dto.CustomerTransactionDto;
+import com.mihaela.orderplatform.transaction_service.enums.Currency;
+import com.mihaela.orderplatform.transaction_service.enums.TransactionStatus;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.JsonNode;
+
+import java.math.BigDecimal;
 
 @Component
 public class CustomerTransactionMapper {
+
+
+    //TODO - create separate class for debezium fields
+    public CustomerTransactionDto fromDebezium(JsonNode after) {
+        return CustomerTransactionDto.builder()
+                .customerId(after.get("customer_id").asText())
+                .orderId(after.get("id").asLong())
+                .amount(new BigDecimal(after.get("amount").asText()))
+                .currency(Currency.valueOf(after.get("currency").asText()))
+                .status(TransactionStatus.valueOf(after.get("status").asText()))
+                .build();
+    }
 
     public CustomerTransactionDto toDto(CustomerTransaction entity) {
         return CustomerTransactionDto.builder()
