@@ -1,25 +1,36 @@
 package com.mihaela.orderplatform.transaction_service.service;
 
-import com.mihaela.orderplatform.transaction_service.dto.CustomerTransactionDto;
+import com.mihaela.orderplatform.transaction_service.domain.CustomerTransaction;
 import com.mihaela.orderplatform.transaction_service.mapper.CustomerTransactionMapper;
+import com.mihaela.orderplatform.transaction_service.repository.CustomerTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.JsonNode;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TransactionService {
 
     private final CustomerTransactionMapper transactionMapper;
+    private final FeeCalculationService feeCalculationService;
+    private final CustomerTransactionRepository repository;
 
+    @Transactional
     public void processTransaction(JsonNode customerOrder) {
-        log.debug("Transaction process begin");
+        log.debug("Processing transaction...");
 
-        CustomerTransactionDto noFeeTransaction = transactionMapper.fromDebezium(customerOrder);
-        //TODO -> add fees -> directly fetch fee table -> go over all the fees added to that transaction_id -> set to the CustomerTransactionDto + save to DB
+        CustomerTransaction transaction = transactionMapper.fromDebezium(customerOrder);
+
+        feeCalculationService.enrichTransaction(transaction);
+        saveTransaction(transaction);
+
+        log.trace("Transaction {} saved with {} fees", transaction.getOrderId(), transaction.getFees().size());
     }
 
-
+    private void saveTransaction(CustomerTransaction transaction) {
+        repository.save(transaction);
+    }
 }
