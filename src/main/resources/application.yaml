@@ -6,11 +6,17 @@ spring:
     username: order_user
     password: order_password
     driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
   kafka:
     bootstrap-servers: localhost:29092
 
     consumer:
-      group-id: my-consumer-group
+      group-id: transaction-service
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -39,7 +45,7 @@ management:
 
 logging:
   level:
-    com.mihaela.orderplatform: INFO
+    com.mihaela.orderplatform: DEBUG
 
 springdoc:
   swagger-ui:
