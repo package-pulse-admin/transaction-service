@@ -1,6 +1,7 @@
 package com.mihaela.orderplatform.transaction_service.service;
 
 import com.mihaela.orderplatform.transaction_service.domain.CustomerTransaction;
+import com.mihaela.orderplatform.transaction_service.enums.TransactionStatus;
 import com.mihaela.orderplatform.transaction_service.mapper.CustomerTransactionMapper;
 import com.mihaela.orderplatform.transaction_service.repository.CustomerTransactionRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class TransactionService {
 
         CustomerTransaction transaction = transactionMapper.fromDebezium(customerOrder);
 
+        transaction.setStatus(TransactionStatus.PENDING_PAYMENT);
         feeCalculationService.enrichTransaction(transaction);
         saveTransaction(transaction);
 
